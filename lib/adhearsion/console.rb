@@ -67,6 +67,7 @@ module Adhearsion
     end
 
     def originate(*args, &block)
+      logger.warn "Console Originate"
       Adhearsion::OutboundCall.originate(*args, &block)
     end
 

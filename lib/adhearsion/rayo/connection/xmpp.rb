@@ -46,8 +46,12 @@ module Adhearsion
         end
 
         def write(command, options = {})
+          logger.warn "XMPP write"
+          require 'pry'; binding.pry
           iq = prep_command_for_execution command, options
           command.request!
+          logger.warn "XMPP write post prep"
+          require 'pry'; binding.pry
           client.write_with_handler iq do |response|
             if response.result?
               handle_iq_result response, command
@@ -66,6 +70,8 @@ module Adhearsion
           if command.is_a?(Command::Join) && command.mixer_name
             @joined_mixers << command.mixer_name
           end
+          logger.warn "XMPP prep_command_for_execution"
+          require 'pry'; binding.pry
           create_iq(jid_for_command(command), command.request_id).tap do |iq|
             command.to_rayo(iq)
           end

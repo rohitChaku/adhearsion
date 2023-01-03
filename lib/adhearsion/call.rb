@@ -96,7 +96,7 @@ module Adhearsion
       @end_blocker  = Celluloid::Condition.new
       @peers        = {}
       @duration     = nil
-      @auto_hangup  = true
+      @auto_hangup  = false
       @after_hangup_lifetime = nil
 
       self << offer if offer
@@ -318,12 +318,14 @@ module Adhearsion
     end
 
     def accept(headers = nil)
+      logger.warn "Call accept"
       @accept_command ||= write_and_await_response Adhearsion::Rayo::Command::Accept.new(:headers => headers)
     rescue Adhearsion::ProtocolError => e
       abort e
     end
 
     def answer(headers = nil)
+      logger.warn "Call answer"
       write_and_await_response Adhearsion::Rayo::Command::Answer.new(:headers => headers)
       @answer_time = Time.now
     rescue Adhearsion::ProtocolError => e
@@ -331,6 +333,7 @@ module Adhearsion
     end
 
     def reject(reason = :busy, headers = nil)
+      logger.warn "Call reject"
       write_and_await_response Adhearsion::Rayo::Command::Reject.new(:reason => reason, :headers => headers)
       Adhearsion::Events.trigger :call_rejected, call: current_actor, reason: reason
     rescue Adhearsion::ProtocolError => e
@@ -473,6 +476,8 @@ module Adhearsion
 
     # @private
     def write_and_await_response(command, timeout = 60, fatal = false)
+      logger.warn "Call write_and_await_response"
+      require 'pry'; binding.pry
       @commands << command
       write_command command
 

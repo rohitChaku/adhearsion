@@ -100,6 +100,8 @@ module Adhearsion
       end
 
       def to_rayo(parent = nil)
+        logger.warn "Rayo Node to_rayo"
+        require 'pry'; binding.pry
         parent = parent.parent if parent.is_a?(Nokogiri::XML::Builder)
         Nokogiri::XML::Builder.with(parent) do |xml|
           xml.send(registered_name,

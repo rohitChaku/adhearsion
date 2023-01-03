@@ -25,6 +25,7 @@ module Adhearsion
       # @see #dial for more possible options
       #
       def originate(to, opts = {}, &controller_block)
+        logger.warn "Outbound Call Originate"
         new.tap do |call|
           call.execute_controller_or_router_on_answer opts.delete(:controller), opts.delete(:controller_metadata), &controller_block
           call.dial to, opts
@@ -91,8 +92,12 @@ module Adhearsion
       @id = ref.call_id
       @domain = ref.domain
 
+      # Current Actor -> Current OutboutCall Object
       Adhearsion.active_calls << current_actor
 
+      logger.warn "Outbound Call Dial write_and_await_response"
+      # require 'pry'; binding.pry
+      byebug
       write_and_await_response(@dial_command, wait_timeout, true).tap do |dial_command|
         @start_time = dial_command.timestamp.to_time
         if @dial_command.uri != self.uri
@@ -114,6 +119,7 @@ module Adhearsion
     end
 
     def run_router
+      logger.debug "Outbound Call Run Router"
       catching_standard_errors do
         Adhearsion.router.handle current_actor
       end
@@ -130,6 +136,9 @@ module Adhearsion
     end
 
     def execute_controller_or_router_on_answer(controller, metadata = {}, &controller_block)
+      logger.warn "Outbound Call execute_controller_or_router_on_answer"
+      # require 'pry'; binding.pry
+      byebug
       if controller || controller_block
         route = Router::Route.new 'inbound', controller, &controller_block
         route.controller_metadata = metadata

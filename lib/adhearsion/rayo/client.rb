@@ -53,6 +53,8 @@ module Adhearsion
             trigger_handler :event, event
           end
         end
+        logger.warn "Client execute_command"
+        require 'pry'; binding.pry
         connection.write command, options
       end
     end

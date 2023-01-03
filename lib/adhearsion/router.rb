@@ -29,6 +29,8 @@ module Adhearsion
     end
 
     def handle(call)
+      puts "Router Handle"
+      require 'pry'; binding.pry
       raise NoMatchError unless route = match(call)
       logger.info "Call #{call.id} selected route \"#{route.name}\" (#{route.target})"
       route.dispatch call

@@ -26,6 +26,8 @@ module Adhearsion
       end
 
       def dispatch(call, callback = nil)
+        puts "Route Dispatch"
+        require 'pry'; binding.pry
         Adhearsion::Events.trigger :call_routed, call: call, route: self
 
         call_id = call.id # Grab this to use later incase the actor is dead
